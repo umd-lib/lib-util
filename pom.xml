@@ -27,6 +27,14 @@
       </plugin>
     </plugins>
   </build>
+
+  <distributionManagement>
+    <repository>
+      <id>um-libraries-repo</id>
+      <name>University of Maryland Libraries</name>
+      <url>scp://maven.lib.umd.edu/apps/apache/html/maven2</url>
+    </repository>
+  </distributionManagement>
  
   <dependencies>
     <dependency>
