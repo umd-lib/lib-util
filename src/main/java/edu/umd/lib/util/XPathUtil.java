@@ -1,7 +1,9 @@
 package edu.umd.lib.util;
 
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import org.dom4j.DocumentFactory;
 import org.dom4j.InvalidXPathException;
@@ -28,14 +30,16 @@ public class XPathUtil {
     // namespace initialization
     Map<String,String> namespaces = new HashMap<String,String>();
     
-    namespaces.put("oai_dc","http://www.openarchives.org/OAI/2.0/oai_dc/");
-    namespaces.put("sparql","http://www.w3.org/2001/sw/DataAccess/rf1/result");
-    namespaces.put("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
-    namespaces.put("mets", "http://www.loc.gov/METS/");
-    namespaces.put("xlink", "http://www.w3.org/1999/xlink");
-    namespaces.put("marc", "http://www.loc.gov/MARC21/slim");
-    namespaces.put("doInfo", "http://www.itd.umd.edu/fedora/doInfo");
-    namespaces.put("amInfo", "http://www.itd.umd.edu/fedora/amInfo");
+    Properties p = new Properties();
+    try {
+      p.load((new Object()).getClass().getResourceAsStream("/edu/umd/lib/util/namespace.properties"));
+    } catch (Exception e) {
+      System.err.println("XPathUtil: unable to load /edu/umd/lib/util/namespace.properties : " + e.getMessage());
+    }
+    
+    for (Object key : p.keySet()) {
+      namespaces.put((String)key, (String)p.get(key));
+    }
     
     DocumentFactory.getInstance().setXPathNamespaceURIs(namespaces); 
   }
