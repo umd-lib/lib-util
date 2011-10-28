@@ -23,10 +23,14 @@ public class XPathUtil {
 
   private static final Map<String,XPath> cache = new HashMap<String,XPath>();
   
+  {
+    setDefaultMapping();
+  }
+  
   /**
    * Set global namespace prefix/uri mapping based on default values 
    */
-  public static void setDefault() {
+  public static void setDefaultMapping() {
     // namespace initialization
     Map<String,String> namespaces = new HashMap<String,String>();
     
@@ -44,6 +48,13 @@ public class XPathUtil {
     DocumentFactory.getInstance().setXPathNamespaceURIs(namespaces); 
   }
 
+  /**
+   * Add additional namespace prefix/uri mappings from a Properties object
+   */
+  public static void addMapping(Map m) {
+    DocumentFactory.getInstance().getXPathNamespaceURIs().putAll(m);
+  }
+  
   /**
    * Get a compiled XPath object for the expression. Cache.
    */
