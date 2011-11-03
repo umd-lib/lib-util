@@ -39,7 +39,7 @@ public class SambaConnectionTest {
 		
 		System.out.println(smbConnection.listFile());
 		System.out.println(smbConnection.gotoDirectory("FedoraBatch"));
-		smbConnection.setFile("src/test/resources/edu/umd/lib/util/SamplePrangeBatch.xls");
+		smbConnection.setFile("SamplePrangeBatch.xls");
 		
 		ExcelReader testReader = new ExcelReader(smbConnection);
 		System.out.println(testReader.getLabels());
