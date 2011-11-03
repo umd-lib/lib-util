@@ -22,7 +22,7 @@ public class SambaConnectionTest {
 		String domain = null;
 		String sharePath = null;
 		
-		File file = new File("connection.properties");
+		File file = new File("src/test/resources/edu/umd/lib/util/connection.properties");
 		FileInputStream fileInput = new FileInputStream(file);
 		Properties properties = new Properties();
 		properties.load(fileInput);
