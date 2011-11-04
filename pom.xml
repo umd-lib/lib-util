@@ -13,7 +13,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputencoding>UTF-8</project.reporting.outputencoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <poi.version>3.7</poi.version>
   </properties>
 
@@ -26,10 +26,15 @@
          <source>1.6</source>
          <target>1.6</target>
          
+         <span><encoding>UTF-8</encoding></span>  
+         
         </configuration>
-      </plugin>
-    </plugins>
+      </plugin>  
+    </plugins>  
   </build>
+
+
+
 
   <distributionManagement>
     <repository>
@@ -56,6 +61,7 @@
       <artifactId>jaxen</artifactId>
       <version>1.1.1</version>
     </dependency>
+    
     <dependency>
       <groupId>org.apache.poi</groupId>
       <artifactId>poi</artifactId>
@@ -82,8 +88,7 @@
 		<artifactId>activation</artifactId>
 		<version>1.1</version>
 	</dependency>
-    
-        
+          
 	<dependency>
 	<groupId>javax.mail</groupId>
 	<artifactId>mail</artifactId>
