@@ -22,10 +22,10 @@ public class SambaConnectionTest {
 		String domain = null;
 		String sharePath = null;
 		
-		/*the Properties file should be placed under user's home directory*/
-		/*In Windows it will perhaps be "C:\Users\ uersName\"*/
-		String testFilePath = System.getProperty("user.home");
-		File file = new File(testFilePath + File.separator +"connection.properties");
+		/*the Properties file should be placed in ref folder under project directory*/
+		/*In Windows it will perhaps be "C:\Users\allan\Documents\workspace-sts-2.8.0.RELEASE\lib-util\ref"*/
+		String testFilePath = System.getProperty("user.dir");
+		File file = new File(testFilePath + File.separator+ "ref" + File.separator +"connection.properties");
 		FileInputStream fileInput = new FileInputStream(file);
 		Properties properties = new Properties();
 		properties.load(fileInput);
