@@ -4,7 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Iterator;
 
-public class SheetIterator implements Iterator<HashMap<String, String>>{
+public class SheetIterator implements Iterable<HashMap<String, String>>, Iterator<HashMap<String, String>>{
 	
 	private int position;
 	private ExcelReader itReader;
@@ -50,6 +50,13 @@ public class SheetIterator implements Iterator<HashMap<String, String>>{
 		// TODO Auto-generated method stub
 		
 	}
+
+
+  @Override
+  public Iterator<HashMap<String, String>> iterator() {
+    // TODO Auto-generated method stub
+    return this;
+  }
 
 
 
