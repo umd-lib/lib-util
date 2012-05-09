@@ -18,7 +18,12 @@ public class SheetIterator implements Iterable<HashMap<String, String>>, Iterato
 	
 	public boolean hasNext() {
 		
-		if( position < this.itReader.sheet.getLastRowNum()){
+		if (this.itReader.sheet == null) {
+		  System.err.println("lib-util:SheetIterator - The ExcelReader has a null sheet.");
+		  return false;
+		}
+		
+	  if( position < this.itReader.sheet.getLastRowNum()){
 			try {
 				if(this.itReader.getData(position+1) != null){
 				return true;

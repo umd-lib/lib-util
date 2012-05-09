@@ -14,6 +14,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import edu.umd.lib.util.sambaConnection.*;
@@ -143,13 +144,12 @@ public class ExcelReader {
 		
 		// needed to be fix by returns the first sheet NOT the SHEET1 !
 		Sheet sheet;
-		
-		if(name == null){			
-			sheet = this.workbook.getSheetAt(0);			
+	
+		if (name == null) {
+		  sheet = this.workbook.getSheetAt(0);
 		}
-		
-		else{		
-		sheet = this.workbook.getSheet(name);	
+		else if ((sheet = this.workbook.getSheet(name)) == null) {
+		  System.err.println("lib-util: ExcelReader - no sheet for (" + name + ")");
 		}
 		return sheet;
 	}
@@ -183,7 +183,7 @@ public class ExcelReader {
 			Cell currCell = row.getCell(cellIndex);
 			if( currCell == null){
 				continue;
-			}			
+			}		
 			dataMap.put(getLabel(currCell), getValue(currCell));
 			
 		}
@@ -231,9 +231,31 @@ public class ExcelReader {
 	 * @throws UnsupportedEncodingException 
 	 */
 	private String getValue(Cell cell) throws UnsupportedEncodingException{
-		String value = cell.getStringCellValue();
+	  String value = null;
+	  switch (cell.getCellType()) {
+	  case XSSFCell.CELL_TYPE_NUMERIC:
+	    value = Double.toString(cell.getNumericCellValue());
+	    break;
+	  case XSSFCell.CELL_TYPE_STRING:
+	    value = cell.getStringCellValue();
+	    break;
+	  case XSSFCell.CELL_TYPE_FORMULA: 
+	    value = cell.getCellFormula();
+	    break;
+	  case XSSFCell.CELL_TYPE_BLANK: 
+      value = "";
+      break;
+	  case XSSFCell.CELL_TYPE_BOOLEAN: 
+      value = (cell.getBooleanCellValue() == true?"Y":"N");
+      break;
+	  case XSSFCell.CELL_TYPE_ERROR: 
+      value = cell.getStringCellValue();
+      break;
+    default:
+      value = cell.toString();
+	  }
 		value = toUTF_8(value);
-		return value;
+	  return value;
 	}
 	
 	public Iterator<HashMap<String,String>> iterator(){

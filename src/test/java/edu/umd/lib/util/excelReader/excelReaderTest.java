@@ -42,6 +42,17 @@ public class excelReaderTest {
 			System.out.println(it.next());
 		}
 		System.out.println("Finished.");
-		}
+	}
+
+  @Test
+  public void testStaffData() throws IOException {
+    String path = "src/test/resources/edu/umd/lib/util/people.xls";
+    ExcelReader staffdir = new ExcelReader(path);
+    Iterator<HashMap<String, String>> iterator = staffdir.iterator();
+    while(iterator.hasNext()){
+      System.out.println(iterator.next());
+    }
+    System.out.println("Finished");
+  }    
 
 }
