@@ -18,7 +18,7 @@ public class EmailSenderTest {
 		sender.setText(content);
 		sender.setSubject("This is a テイスド");
 		sender.setFile("src/test/resources/edu/umd/lib/util/testfile.txt");
-		sender.setHost("129.2.17.241", 87);
+		sender.setHost("libsmtp.umd.edu", 87);
 		sender.sendEmail(recipients);
 		System.out.print("this");
 	}
@@ -34,7 +34,7 @@ public class EmailSenderTest {
 		sender.setText(content);
 		sender.setSubject("This is a テイスド");
 		sender.setFile("src/test/resources/edu/umd/lib/util/TestPDF.pdf");
-		sender.setHost("129.2.17.241", 87);
+		sender.setHost("libsmtp.umd.edu", 87);
 		sender.sendEmail(recipients);
 	}
 
