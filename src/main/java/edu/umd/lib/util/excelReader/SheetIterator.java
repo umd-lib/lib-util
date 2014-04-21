@@ -4,7 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Iterator;
 
-public class SheetIterator implements Iterable<HashMap<String, String>>, Iterator<HashMap<String, String>>{
+public class SheetIterator implements Iterator<HashMap<String, String>>, Iterable<HashMap<String, String>> {
 	
 	private int position;
 	private ExcelReader itReader;
@@ -16,14 +16,10 @@ public class SheetIterator implements Iterable<HashMap<String, String>>, Iterato
 	}
 
 	
+	@Override
 	public boolean hasNext() {
 		
-		if (this.itReader.sheet == null) {
-		  System.err.println("lib-util:SheetIterator - The ExcelReader has a null sheet.");
-		  return false;
-		}
-		
-	  if( position < this.itReader.sheet.getLastRowNum()){
+		if( position < this.itReader.getLastRowNum()){
 			try {
 				if(this.itReader.getData(position+1) != null){
 				return true;
@@ -36,7 +32,7 @@ public class SheetIterator implements Iterable<HashMap<String, String>>, Iterato
 		return false;
 	}
 
-	
+	@Override
 	public HashMap<String, String> next() {
 		
 		position += 1;
@@ -50,18 +46,18 @@ public class SheetIterator implements Iterable<HashMap<String, String>>, Iterato
 		return dataMap;
 	}
 
-	
+	@Override
 	public void remove() {
 		// TODO Auto-generated method stub
 		
 	}
 
 
-  @Override
-  public Iterator<HashMap<String, String>> iterator() {
-    // TODO Auto-generated method stub
-    return this;
-  }
+	@Override
+	public Iterator<HashMap<String, String>> iterator() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 
 
