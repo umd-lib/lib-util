@@ -19,7 +19,7 @@ To create your own connection.properties file, you need to have following attrib
 
 ---------------------
 
-2. When connection.properties file is ready, create a "ref" folder under lib-util/
-3. put connection.properties in  lib-util/ref/
+2. When connection.properties file is ready, create a "ref" folder under lib-util/util
+3. put connection.properties in  lib-util/util/ref/
 
 4. Setting up finished, now you can run the test.
