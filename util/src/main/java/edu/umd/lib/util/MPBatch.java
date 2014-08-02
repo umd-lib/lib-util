@@ -5,19 +5,11 @@
 
 package edu.umd.lib.util;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStreamReader;
-import java.util.Date;
-import java.util.Properties;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
-import org.apache.log4j.PropertyConfigurator;
-
-import edu.umd.lims.util.ErrorHandling;
 
 /**
  * MPBatch: Run multiple processes in the background. Report their results in an
@@ -75,48 +67,42 @@ public class MPBatch extends MPBatchThread {
    * @param oSync
    *          synchronization object used to create the MPBatchThread's in
    *          vThreads
-   * @param vThreads
+   * @param lThreads
    *          list of MPBatchThread's to wait on
    */
 
-  public static void run(Object oSync, Vector<MPBatchThread> vThreads)
+  public static void run(Object oSync, List<MPBatchThread> lThreads)
       throws InterruptedException {
-    Vector<MPBatchThread> v = (Vector<MPBatchThread>) vThreads.clone();
-    int n;
-    MPBatchThread mp;
+    ArrayList<MPBatchThread> l = new ArrayList<MPBatchThread>(lThreads);
 
     // Don't let any spawned threads call oSync.notify() unless we
     // call oSync.wait()
     synchronized (oSync) {
 
       // Loop through all the threads
-      for (n = 0; n < v.size(); n++) {
+      for (MPBatchThread mp : l) {
         // Start the thread
-        mp = v.elementAt(n);
         mp.start();
       }
-      log.debug(v.size() + " threads started");
+      log.debug(l.size() + " threads started");
 
       // Check the threads until there are none left
-      while (v.size() > 0) {
+      while (l.size() > 0) {
         // Wait for an MPBatch to complete
-        log.debug(v.size() + " threads still running; wait()");
+        log.debug(l.size() + " threads still running; wait()");
         oSync.wait();
         log.debug("awakened from wait()");
 
         // Loop through all the threads
-        for (n = 0; n < v.size();) {
+        Iterator<MPBatchThread> iter = l.iterator();
+        while (iter.hasNext()) {
           // Get the thread
-          mp = v.elementAt(n);
+          MPBatchThread mp = iter.next();
 
-          // Check if this one is still running
-          if (!mp.fDone) {
-            // Yes
-            n++;
-
-          } else {
-            // No, remove it from the list
-            v.removeElementAt(n);
+          // Check if this one is done running
+          if (mp.fDone) {
+            // Yes, remove it from the list
+            iter.remove();
             log.debug("thread [" + mp.getName() + "] is done");
           }
         }
