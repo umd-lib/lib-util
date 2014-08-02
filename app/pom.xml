@@ -1,0 +1,76 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>edu.umd.lib</groupId>
+    <artifactId>lib-util-parent</artifactId>
+    <version>1.2-SNAPSHOT</version>
+  </parent>
+
+  <name>UMD Libraries Utilities - Applications</name>
+  <artifactId>lib-util-app</artifactId>
+  <packaging>jar</packaging>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+         <source>1.6</source>
+         <target>1.6</target>
+         
+         <span><encoding>UTF-8</encoding></span>  
+         
+        </configuration>
+      </plugin>  
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>1.5</version>
+        <configuration>
+          <transformers>
+          </transformers>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                  </excludes>
+                </filter>
+              </filters>
+              <!-- Additional configuration. -->
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>  
+  </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>edu.umd.lib</groupId>
+      <artifactId>lib-util</artifactId>
+      <version>1.2-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.14</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+  
+</project>
