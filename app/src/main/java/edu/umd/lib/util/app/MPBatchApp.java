@@ -76,6 +76,11 @@ public class MPBatchApp {
      */
     ArrayList<MPBatch> lPending = new ArrayList<MPBatch>();
 
+    /**
+     * Accumulate running time for each thread
+     */
+    long cumulative = 0l;
+
     int nReturnCode = 0;
 
     /**
@@ -157,13 +162,15 @@ public class MPBatchApp {
             // Report process information
             StringBuilder sb = new StringBuilder();
             sb.append("*************************************************\n");
-            sb.append("* Command: " + mp.strCmd + "\n");
-            sb.append("* Start:   " + new Date(mp.lStart) + "\n");
-            sb.append("* Stop:    " + new Date(mp.lStop) + "\n");
-            sb.append("* Elapsed: "
+            sb.append("* Command:      " + mp.strCmd + "\n");
+            sb.append("* Start:        " + new Date(mp.lStart) + "\n");
+            sb.append("* Stop:         " + new Date(mp.lStop) + "\n");
+            sb.append("* Elapsed Time: "
                 + MPBatchThread.getElapsed(mp.lStop - mp.lStart) + "\n");
             sb.append("* Return:  " + mp.nReturnCode + "\n");
             log.info(sb);
+
+            cumulative += mp.lStop - mp.lStart;
 
             if (!mp.strOut.equals(""))
               log.info("* Stdout:\n" + mp.strOut);
@@ -198,12 +205,14 @@ public class MPBatchApp {
     // Report cumulative information
     StringBuilder sb = new StringBuilder();
     sb.append("*************************************************\n");
-    sb.append("* Cumulative\n");
-    sb.append("* Start:   " + dStart + "\n");
-    sb.append("* Stop:    " + dStop + "\n");
-    sb.append("* Elapsed: "
+    sb.append("* Final\n");
+    sb.append("* Start:           " + dStart + "\n");
+    sb.append("* Stop:            " + dStop + "\n");
+    sb.append("* Elapsed Time:    "
         + MPBatchThread.getElapsed(dStop.getTime() - dStart.getTime()) + "\n");
-    sb.append("* Return:  " + nReturnCode + "\n");
+    sb.append("* Cumulative Time: " + MPBatchThread.getElapsed(cumulative)
+        + "\n");
+    sb.append("* Return:          " + nReturnCode + "\n");
     log.info(sb);
 
     System.exit(nReturnCode);
