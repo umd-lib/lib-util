@@ -7,7 +7,9 @@ package edu.umd.lib.util.app;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,6 +29,8 @@ import org.apache.log4j.PropertyConfigurator;
 import edu.umd.lib.util.MPBatch;
 import edu.umd.lib.util.MPBatchThread;
 import edu.umd.lims.util.ErrorHandling;
+
+import com.google.gson.stream.JsonWriter;
 
 /**
  * MPBatch: Run multiple processes in the background. Report their results in an
@@ -58,6 +62,11 @@ public class MPBatchApp {
    * Log4J configuration file.
    */
   private static File log4jConfig = null;
+
+  /**
+   * JSON format log file.
+   */
+  private static File jsonFile = null;
 
   /***************************************************************** main */
   /**
@@ -104,6 +113,16 @@ public class MPBatchApp {
         PatternLayout l = new PatternLayout("%m%n");
         root.addAppender(new ConsoleAppender(l));
       }
+    }
+
+    // Setup JSON logging
+    JsonWriter jsonWriter = null;
+    if (jsonFile != null) {
+      jsonWriter = new JsonWriter(new OutputStreamWriter(new FileOutputStream(jsonFile)));
+      jsonWriter.setIndent("    ");
+      jsonWriter.beginObject();
+      jsonWriter.name("processes");
+      jsonWriter.beginArray();
     }
 
     // Don't let any spawned threads call oSync.notify() unless we
@@ -180,6 +199,22 @@ public class MPBatchApp {
               log.info("* Exception:\n"
                   + ErrorHandling.getStackTrace(mp.exception));
 
+            // JSON logging
+            if (jsonWriter != null) {
+              jsonWriter.beginObject();
+              jsonWriter.name("command").value(mp.strCmd);
+              jsonWriter.name("start").value((new Date(mp.lStart)).toString());
+              jsonWriter.name("stop").value((new Date(mp.lStop)).toString());
+              jsonWriter.name("status").value(mp.nReturnCode);
+              jsonWriter.name("stdout").value(mp.strOut);
+              jsonWriter.name("stderr").value(mp.strErr);
+              if (mp.exception != null) {
+               jsonWriter.name("exception").value(ErrorHandling.getStackTrace(mp.exception));
+              }
+              jsonWriter.endObject();
+              jsonWriter.flush();
+            }
+
             // Add a pending thread
             if (lPending.size() > 0) {
               mp = lPending.remove(0);
@@ -215,6 +250,24 @@ public class MPBatchApp {
     sb.append("* Return:          " + nReturnCode + "\n");
     log.info(sb);
 
+    // JSON logging
+    if (jsonWriter != null) {
+      jsonWriter.endArray();
+
+      jsonWriter.name("cumulative");
+      jsonWriter.beginObject();
+      jsonWriter.name("start").value(dStart.toString());
+      jsonWriter.name("stop").value(dStop.toString());
+      jsonWriter.name("elapsed").value(MPBatchThread.getElapsed(dStop.getTime() - dStart.getTime()));
+      jsonWriter.name("cumulative").value(MPBatchThread.getElapsed(cumulative));
+      jsonWriter.name("status").value(nReturnCode);
+      jsonWriter.endObject();
+
+      jsonWriter.endObject();
+
+      jsonWriter.close();
+    }
+
     System.exit(nReturnCode);
   }
 
@@ -244,6 +297,9 @@ public class MPBatchApp {
     options.addOption(option);
 
     option = new Option("h", "help", false, "get this list");
+    options.addOption(option);
+
+    option = new Option("j", "json-logfile", true, "json format log file");
     options.addOption(option);
 
     // Parse the command line
@@ -279,6 +335,14 @@ public class MPBatchApp {
       debug = true;
     }
 
+    if (cmd.hasOption('j')) {
+      jsonFile = new File(cmd.getOptionValue('j'));
+      if (jsonFile.exists() && !jsonFile.canWrite()) {
+        printUsage(options, "Unable to open " + jsonFile.getAbsoluteFile()
+            + " for writing");
+      }
+    }
+
   }
 
   /**
@@ -300,7 +364,7 @@ public class MPBatchApp {
 
     HelpFormatter formatter = new HelpFormatter();
     formatter.printHelp(err, 80,
-        "MPBatchApp [-n threads] [-t delay] [-l log4j-config] [-d]", null,
+        "MPBatchApp [-n threads] [-t delay] [-l log4j-config] [-j json-logfile] [-d]", null,
         options, 2, 2, null);
 
     err.close();

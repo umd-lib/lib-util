@@ -9,7 +9,7 @@
   </parent>
 
   <name>UMD Libraries Utilities - Applications</name>
-  <artifactId>lib-util-app</artifactId>
+  <artifactId>mpbatch</artifactId>
   <packaging>jar</packaging>
 
   <build>
@@ -20,11 +20,11 @@
         <configuration>
          <source>1.6</source>
          <target>1.6</target>
-         
-         <span><encoding>UTF-8</encoding></span>  
-         
+
+         <span><encoding>UTF-8</encoding></span>
+
         </configuration>
-      </plugin>  
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
@@ -51,12 +51,17 @@
                 </filter>
               </filters>
               <!-- Additional configuration. -->
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>edu.umd.lib.util.app.MPBatchApp</mainClass>
+                </transformer>
+              </transformers>
             </configuration>
           </execution>
         </executions>
       </plugin>
 
-    </plugins>  
+    </plugins>
   </build>
 
   <dependencies>
@@ -73,6 +78,11 @@
       <groupId>commons-cli</groupId>
       <artifactId>commons-cli</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>2.8.6</version>
+      <scope>compile</scope>
+    </dependency>
   </dependencies>
-  
 </project>
