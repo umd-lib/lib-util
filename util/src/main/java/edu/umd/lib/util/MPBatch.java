@@ -43,6 +43,9 @@ public class MPBatch extends MPBatchThread {
       String[] strExec = { "/bin/csh", "-f", "-c", strCmd };
       Process p = Runtime.getRuntime().exec(strExec);
 
+      // Close the input
+      p.getOutputStream().close();
+
       // Gather the output
       strOut = collectInputStream(p.getInputStream());
       strErr = collectInputStream(p.getErrorStream());
