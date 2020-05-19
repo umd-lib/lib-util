@@ -68,6 +68,11 @@ public class MPBatchApp {
    */
   private static File jsonFile = null;
 
+  /**
+   * Exec style commands.
+   */
+  private static boolean exec = false;
+
   /***************************************************************** main */
   /**
    * Main: runtime entry point.
@@ -135,7 +140,7 @@ public class MPBatchApp {
       String strLine;
       while ((strLine = brIn.readLine()) != null) {
         if (!strLine.equals("") && !strLine.startsWith("#")) {
-          MPBatch mp = new MPBatch(oSync, strLine);
+          MPBatch mp = new MPBatch(oSync, strLine, exec);
           mp.setName(strLine);
 
           if (lCurrent.size() < nThreads) {
@@ -302,6 +307,9 @@ public class MPBatchApp {
     option = new Option("j", "json-logfile", true, "json format log file");
     options.addOption(option);
 
+    option = new Option("e", "exec", false, "commands are tab delimited list of parameters to exec()");
+    options.addOption(option);
+
     // Parse the command line
     if (args.length == 1 && (args[0].equals("-h") || args[0].equals("--help"))) {
       printUsage(options);
@@ -343,6 +351,9 @@ public class MPBatchApp {
       }
     }
 
+    if (cmd.hasOption('e')) {
+      exec = true;
+    }
   }
 
   /**
@@ -362,10 +373,18 @@ public class MPBatchApp {
       err.println();
     }
 
+    StringBuffer footer = new StringBuffer();
+    footer.append("\n");
+    footer.append("Reads each line of stdin as a separate process to run.");
+    footer.append(" Empty lines and those beginning with # are skipped.");
+    footer.append(" Normally, each line is a single process string which is sent");
+    footer.append(" to /bin/csh for interpretation.  If the -e flag is enabled,");
+    footer.append(" each line is a tab delimited list of raw parameters to exec()");
+
     HelpFormatter formatter = new HelpFormatter();
     formatter.printHelp(err, 80,
-        "MPBatchApp [-n threads] [-t delay] [-l log4j-config] [-j json-logfile] [-d]", null,
-        options, 2, 2, null);
+        "MPBatchApp [-n threads] [-t delay] [-l log4j-config] [-j json-logfile] [-e] [-d]", null,
+        options, 2, 2, footer.toString());
 
     err.close();
 

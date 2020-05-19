@@ -8,6 +8,7 @@ package edu.umd.lib.util;
 import edu.umd.lims.util.StringBuffer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -25,11 +26,22 @@ public class MPBatch extends MPBatchThread {
   static Logger log = Logger.getLogger(MPBatch.class);
 
   public String strCmd;
+  public String[] strExec;
 
   public MPBatch(Object oSync, String strCmd) {
+    this(oSync, strCmd, false);
+  }
+
+  public MPBatch(Object oSync, String strCmd, boolean exec) {
     super(oSync);
 
-    this.strCmd = strCmd;
+    if (exec) {
+      this.strExec = strCmd.split("\t");
+      this.strCmd = Arrays.toString(this.strExec);
+    } else {
+      this.strExec = new String[]{ "/bin/csh", "-f", "-c", strCmd };
+      this.strCmd = strCmd;
+    }
   }
 
   /****************************************************************** run */
@@ -42,7 +54,6 @@ public class MPBatch extends MPBatchThread {
 
     try {
       // Start the process
-      String[] strExec = { "/bin/csh", "-f", "-c", strCmd };
       Process p = Runtime.getRuntime().exec(strExec);
 
       // Close the input
