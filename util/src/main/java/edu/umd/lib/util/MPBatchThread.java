@@ -52,22 +52,27 @@ public abstract class MPBatchThread extends Thread {
 
   /********************************************************* collectStream */
   /**
-   * Collect IO from an InputStream.
+   * Collect IO from a stdout and stderr.
    *
    * @param is
    *          The InputStream
    * @return The data read from the InputStream
    */
 
-  static public String collectInputStream(InputStream is) throws IOException {
-    // Gather the result
-    int ch;
-    StringBuffer sbRet = new StringBuffer();
+  public void collectInputStreams(Process p, StringBuffer sbInput, StringBuffer sbError) {
 
-    while ((ch = is.read()) != -1)
-      sbRet.append((char) ch);
+    InputStreamThread input = new InputStreamThread(p.getInputStream(), sbInput);
+    InputStreamThread error = new InputStreamThread(p.getErrorStream(), sbError);
 
-    return sbRet.toString();
+    input.start();
+    error.start();
+
+    try {
+      input.join();
+      error.join();
+    }
+    catch (InterruptedException e) {
+    }
   }
 
   /*************************************************************** doWork */
@@ -153,6 +158,37 @@ public abstract class MPBatchThread extends Thread {
         oSync.notify();
       } catch (Exception e) {
         log.error(ErrorHandling.getStackTrace(e));
+      }
+    }
+  }
+
+  /**
+   * Thread to read from an InputStream into a StringBuffer.
+   */
+  class InputStreamThread extends Thread {
+
+    private InputStream is = null;
+    private StringBuffer sb = null;
+
+    public InputStreamThread(InputStream is, StringBuffer sb) {
+        super();
+
+        this.is = is;
+        this.sb = sb;
+    }
+
+    public void run() {
+      // TODO: read more efficiently than one byte at a type
+      // TODO: handle character encoding
+      int ch;
+
+      try {
+        while ((ch = is.read()) != -1) {
+          sb.append((char) ch);
+        }
+      }
+      catch (IOException e) {
+        sb.append("IOException reading stream: " + e.toString());
       }
     }
   }

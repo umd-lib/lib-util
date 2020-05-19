@@ -5,6 +5,8 @@
 
 package edu.umd.lib.util;
 
+import edu.umd.lims.util.StringBuffer;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -47,8 +49,13 @@ public class MPBatch extends MPBatchThread {
       p.getOutputStream().close();
 
       // Gather the output
-      strOut = collectInputStream(p.getInputStream());
-      strErr = collectInputStream(p.getErrorStream());
+      StringBuffer sbInput = new StringBuffer();
+      StringBuffer sbError = new StringBuffer();
+
+      collectInputStreams(p, sbInput, sbError);
+
+      strOut = sbInput.toString();
+      strErr = sbError.toString();
 
       // Get the return value
       p.waitFor();
