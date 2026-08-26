@@ -1,5 +1,8 @@
 === lib-util ===
 
+> [!WARNING]
+> This repository is archived and no longer maintained.
+
 Here is a short instruction of the lib-util project.  
 User should follow the instruction below before running the test. An error may occur otherwise.
 
